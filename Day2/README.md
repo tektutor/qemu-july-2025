@@ -5,7 +5,7 @@
 - Normal copy command doesn’t preserve sparse files efficiently, uses more disk
 - Normal copy command is not QEMU format-aware, might break if metadata is modified
 - Normal copy command doesn't support conversion of one image format to other
-- Normal copy command doesn't support any compression supported by QEMU
+- Normal copy command doesn't support any compression 
 - Normal copy command won’t detect or prevent inconsistencies in the disk format  
 </pre>  
 
