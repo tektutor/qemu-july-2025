@@ -27,7 +27,7 @@ used read-only from vm1.qcow
   
 this helps to conservatively use the storage
   
-Faster, but changes go to vm2 only
+Faster, changes done in vm2 only goes to vm2
 </pre>
 
 If you prefer a full-clone
