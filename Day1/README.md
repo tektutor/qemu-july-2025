@@ -4,6 +4,15 @@
 <pre>
 - is a virtualization technology
 - it is a Hardware + Software Technology
+- each Virtual Machine must be allocated with dedicated hardware resources
+  - dedicated Virtual/Logical CPU Cores
+  - dedicated RAM
+  - dedicated Storage (HDD/SDD)
+  - Virtual Network Card
+  - Vitual Graphics Card
+- as each VM requires dedicated Hardware resources, it is called heavy-weight Virtualization
+- each VM represents a fully functional Operating System
+- we won't observe any noticeable performance difference between a OS that runs on the base machine vs Virtual Machine
 - there are 2 types
   1. Type 1
   - Bare metal Hypervisor
@@ -21,11 +30,9 @@
     - VMWare Workstation ( Windows & Linux )
     - VMWare Fusion ( Mac OS-X - Paid )
     - Parallels ( Mac OS-X - Paid )
-  - each Virtual Machine must be allocated with dedicated hardware resources
-    - each 
 </pre>
 
-## Lab - Installing QEMU in Ubuntu
+## Lab - Installing QEMU and KVM in Ubuntu
 ```
 sudo apt update
 sudo apt install -y qemu-kvm qemu-system qemu-utils gcc make libvirt-daemon-system libvirt-clients bridge-utils virt-manager
