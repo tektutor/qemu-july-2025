@@ -90,6 +90,7 @@ sudo hostnamectl set-hostname vm2
      - Virtual machines will get Internet access
      - VM to VM communication is possible
      - Only an administrator can create this kind of network
+     - The virtual machine gets an IP address from the same subnet the host machine is connect to
   5. SLIRP
      - is a replacement for user mode networking 
      - host machine can't access the VMs
