@@ -47,6 +47,7 @@ qemu-system-x86_64 -hda vm2.qcow2 \
 ```
 
 In the above command, we need to change the mac address of the VM2 network card to avoid conflicts between VM1 and VM2.
+If suppose the macaddr of first vm1 is 52:54:00:33:44:55, we could just change the last 3 numbers as shown in the command above. We just need to ensure, they aren't same.
 
 After booting the second vm, we need to change the hostname avoid conflicts and to assign unique hostname to VM1 and VM2
 ```
