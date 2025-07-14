@@ -54,3 +54,39 @@ After booting the second vm, we need to change the hostname avoid conflicts and 
 sudo hostnamectl set-hostname vm2
 ```
 
+## Info - Types of QEMU Networks
+<pre>
+- QEMU supports the following types of Networks
+  1. User mode
+     - this is the default type of network used in QEMU VMs when we don't mention any network options
+     - host machine won't be able to access the VM's IP address
+     - optionally, explicit host port forwarding can be done to expose the machine's services to external world
+     - VM can access Internet
+     - Other VMs on the same machine can't acces each other
+     - Regular users(non-admins) will be able to create this user-mode networking 
+  2. Tap
+     - Host machine will be able to access the VM's IP address
+     - VM can be given access to Internet via bridge
+     - VM to VM communication is possible
+     - Only an administrator can create this kind of network
+  3. Socket
+     - Connects the VMs directly using unix sockets
+     - Host machine won't be able to connect to the VMs
+     - Virtual Machines won't get Internet access
+     - VM to VM communicaiton is possible
+     - Only an administrator can create this kind of network
+  4. Bridge
+     - attaches the VM to physical ethernet bridge
+     - Host machine can access the VMs
+     - Virtual machines will get Internet access
+     - VM to VM communication is possible
+     - Only an administrator can create this kind of network
+  5. SLIRP
+     - is a replacement for user mode networking 
+     - host machine can't access the VMs
+     - gives internet access to VM
+     - VM to VM communicaiton is not possible
+     - Non-admin regular users also can create this kind of network
+  6. VDE ( Virtual Distributed Ethernet - not widely used, you won't require this type of network for your usecases )
+  7. Multiqueue ( High Performance )
+</pre>
