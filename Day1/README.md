@@ -364,8 +364,7 @@ rm ubuntu_vm.qcow2
    - good for testing destructive scenarios
 </pre>
 
-
-## Lab - Creating a snapshot ( ie copy vm1 as vm2 to clone )
+## Lab - Creating a snapshot
 
 Here the assumption is you already have created a virtual machine with a disk name ubuntu_vm.qcow2.
 
