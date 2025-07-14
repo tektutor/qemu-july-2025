@@ -261,6 +261,17 @@ qemu-system-x86_64 \
   -smp 2
 ```
 
+In the above command
+<pre>
+-m 4G - allocates 4GB RAM to your VM
+-cdrom ubuntu-24.04.2-live-server-amd64.iso - loading cdrom with live ubuntu iso image to install OS onto the VM
+-drive file=ubuntu_vm.qcow2,format=qcow2 - indicates the ubuntu OS will be installed on the hard disk ( file acts like a hard disk )
+-boot d - Boot from CDROM
+-enable-kvm - you wanted to use KVM for virtualization
+-cpu host - supports the same type of CPU architecture as the base machine
+-smp 2 - allocated Dual core (Virtual/Logical CPU Cores to VM)
+</pre>
+
 Boot the VM 
 ```
 qemu-system-x86_64 \
@@ -273,8 +284,16 @@ qemu-system-x86_64 \
   -net nic
   -net user,hostfwd=tcp::5022-:22 
 ```
-
-Install ifconfig and ping command with the vm
+<pre>
+- The difference between the first command and the command above is, we wanted to boot the OS from hard disk rather than CDROM as we have already installed the OS using the first command in this lab exercise
+-m 4G - allocates -4GB RAM
+-drive file=ubuntu_vm.qcow2,format=qcow2 - hard disk emulated by the file based disk image, qcow2 is the native image format of QEMU
+-cpu host - same CPU architecture as Host machine, as our lab machine is Intel/AMD x86_64 bit Processor, same CPU architecture will be supported in the Guest OS(VM) 
+-smp 2 - allocates Dual virtual cpu cores to the VM
+-net nic - creates a virtual network card in the VM
+-net user,hostfws=tcp:5022-:22 - connects the virtual network card with a network, in case case user mode network (doesn't require admin permission ).  Also performs Port-Forwarding to allow SSH connectivity from other machines.
+</pre>
+Install ifconfig and ping command within the vm
 ```
 sudo apt update && sudo apt install net-tools iputils-ping -y
 ```
@@ -282,11 +301,11 @@ sudo apt update && sudo apt install net-tools iputils-ping -y
 To check if the SSH Server is running on the VM
 ```
 sudo systemctl status ssh
-sudo systemctl enable ssh # Creates a service for SSH also ensure the service runs once the machine is rebooted
-sudo systemctl start ssh
-sudo systemctl status ssh
-sudo ufw status # Whether the firewall is active or inactive
-sudo ufw start
+sudo systemctl enable ssh # Creates a service for SSH also ensures the service runs whenever the machine is rebooted
+sudo systemctl start ssh  # Start the SSH server service
+sudo systemctl status ssh # Reports the current status of the SSH Server service
+sudo ufw status # Tells whether the firewall is active or inactive
+sudo ufw start 
 sudo ufw allow 22/tcp  # We are openning up the SSH port
 sudo ufw list
 ```
@@ -308,6 +327,7 @@ init 0
 rm ubuntu_vm.qcow2
 # lsof -p 31827 | grep qcow2
 ```
+
 
 
 ## Lab - Creating a snapshot ( ie copy vm1 as vm2 to clone )
