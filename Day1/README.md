@@ -279,7 +279,7 @@ In the above command
 -drive file=ubuntu_vm.qcow2,format=qcow2 - indicates the ubuntu OS will be installed on the hard disk ( file acts like a hard disk )
 -boot d - Boot from CDROM
 -enable-kvm - you wanted to use KVM for virtualization
--cpu host - supports the same type of CPU architecture as the base machine
+-cpu host - supports the same type of CPU architecture as the base machine, works only when enable-kvm switch is used
 -smp 2 - allocated Dual core (Virtual/Logical CPU Cores to VM)
 </pre>
 
