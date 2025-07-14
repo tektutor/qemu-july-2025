@@ -12,7 +12,8 @@
   - Vitual Graphics Card
 - as each VM requires dedicated Hardware resources, it is called heavy-weight Virtualization
 - each VM represents a fully functional Operating System
-- we won't observe any noticeable performance difference between a OS that runs on the base machine vs Virtual Machine
+- we won't observe any noticeable performance difference between a OS that runs on the base 
+  machine vs Virtual Machine
 - there are 2 types
   1. Type 1
   - Bare metal Hypervisor
