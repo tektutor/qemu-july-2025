@@ -28,6 +28,8 @@ used read-only from vm1.qcow
 this helps to conservatively use the storage
   
 Faster, changes done in vm2 only goes to vm2
+
+Drawback is, we won't be able to delete the VM1 disk if you wish to delete VM1 entirely while retaining VM2.
 </pre>
 
 If you prefer a full-clone
