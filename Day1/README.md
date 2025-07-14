@@ -155,3 +155,69 @@ lsmod | grep kvm
   - Only works when host and guest share the same architecture
 </pre>
 
+## Info - Understanding QEMU command-line options
+<pre>
+Understanding QEMU’s command-line options is key to configuring and running virtual machines exactly how you need them — whether for emulation, virtualization, or advanced networking.  
+</pre>
+
+Common Switches
+<pre>
+m 2048 
+- allocates 2048 MB of RAM
+smp 2
+- 2 Virtual CPUs
+hda file.qcow2
+- Use this as primary hard disk
+cdrom file.iso
+- Attach ISO as CD-ROM
+boot d	
+- Boot from CD-ROM
+boot c
+- Boot from Hard disk
+boot a
+- Boot from Floppy Drive
+boot n
+- Boot from Network (PXE)
+enable-kvm
+- Enables KVM Hardware Acceleration 
+cpu host
+- Use Host CPU model in guest(faster)
+nographic
+- Disables graphical windows (use console only)
+vnc :1
+- Enables VNC Server on display :1
+display gtk
+- Use GTK GUI
+display none
+- Runs headless(no display)
+netdev user,id=net0
+- User user-mode NAT ( easy but limited )
+device e1000,netdev=net0
+- Attach an Intel e1000 NIC to net0
+netdev tap,id=net1,ifname=tap1,scripti=no
+- Use a TAP interface for full control
+drive file=disk.qcow2,format=qcow2,if=virtio	
+- Adds disk using virtio(faster)
+snapshot
+- Run VM without saving changes
+drive file=usb.img,if=none,id=usbdev
+- Defines drive for USB passthrough
+device usb=storage,drive=usbdev
+- Attaches above drive as USB device
+machine type=pc,accel=kvm
+- Set machine type and accelerator
+device virtio-net-pci
+- Add virtio network device
+device usb-ehci
+- Add USB 2.0 Controller
+rtc base=localtime
+- Set real-time clock to local time(Windows VMs)
+serial stdio
+- Use your terminal as VM serial console
+S -s
+- Pause VM at startup and open GDB stub on port 1234
+monitor stdio
+- Enable interactive QEMU monitor in terminal
+d guest-errors
+- Enable debug output for guest errors
+</pre>
