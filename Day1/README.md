@@ -287,3 +287,11 @@ init 0
 rm ubuntu_vm.qcow2
 # lsof -p 31827 | grep qcow2
 ```
+
+
+## Lab - Creating a snapshot ( ie copy vm1 as vm2 to clone )
+
+Create an internal snapshot
+```
+qemu-img snapshot -c snapshot1 ubuntu_vm.qcow2
+```
