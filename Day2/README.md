@@ -1,6 +1,6 @@
 # Day 2
 
-## Info - What is the difference between normal OS copy command vs qemu-img clone
+## Info - What is the difference between normal OS copy command vs qemu-img clone ( convert and create )
 <pre>
 - Normal copy command doesn’t preserve sparse files efficiently, uses more disk
 - Normal copy command is not QEMU format-aware, might break if metadata is modified
