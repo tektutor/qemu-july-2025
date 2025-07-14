@@ -36,7 +36,8 @@
 ## Lab - Installing QEMU and KVM in Ubuntu
 ```
 sudo apt update
-sudo apt install -y qemu-kvm qemu-system qemu-utils gcc make libvirt-daemon-system libvirt-clients bridge-utils virt-manager
+sudo apt install -y qemu-kvm qemu-system qemu-utils \
+     gcc make libvirt-daemon-system libvirt-clients bridge-utils virt-manager
 sudo usermod -aG libvirt $(whoami)
 newgrp libvirt
 egrep -c '(vmx|svm)' /proc/cpuinfo
@@ -56,7 +57,8 @@ lsmod | grep kvm
 ## Info - QEMU Overview
 <pre>
 - QEMU is a powerful open-source machine emulator and virtualizer
-- QEMU is incredibly powerful because it supports a wide range of CPU architectures and platforms, both for emulation and virtualization
+- QEMU is incredibly powerful because it supports a wide range of CPU architectures and platforms, 
+  both for emulation and virtualization
 - QEMU supports 3 modes
   - Full System Emulation mode
     - Use Cases:
@@ -65,7 +67,8 @@ lsmod | grep kvm
       - Embedded system development
   - User Mode Emulation mode
   - KVM Virtualizaiton Mode
-- What it can and can't do depends largely on how it's used—whether in full system emulation or user-mode emulation
+- What it can and can't do depends largely on how it's used—whether in full system emulation 
+  or user-mode emulation
 - Emulate entire hardware systems (including CPU and devices)
 - Virtualize guest operating systems using KVM for near-native performance (on x86/x86_64 and other platforms)
 - Run code for one CPU architecture on a different one (e.g., ARM on x86). Slower but very flexible
