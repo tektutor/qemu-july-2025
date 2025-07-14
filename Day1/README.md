@@ -291,7 +291,34 @@ rm ubuntu_vm.qcow2
 
 ## Lab - Creating a snapshot ( ie copy vm1 as vm2 to clone )
 
-Create an internal snapshot
+Here the assumption is you already have created a virtual machine with a disk name ubuntu_vm.qcow2.
+
+To create external disk snapshots, use a backing file and switch images
 ```
-qemu-img snapshot -c snapshot1 ubuntu_vm.qcow2
+qemu-img create -f qcow2 -b ubuntu_vm.qcow2 -F qcow2 ubuntu2_vm.qcow2
+```
+
+Boot the VM1 with its original disk 
+```
+qemu-system-x86_64 \
+  -m 4G \
+  -drive file=ubuntu_vm.qcow2,format=qcow2 \
+  -boot c \
+  -enable-kvm \
+  -cpu host \
+  -smp 2
+  -net nic
+  -net user,hostfwd=tcp::5022-:22 
+```
+
+Boot the VM2
+qemu-system-x86_64 \
+  -m 4G \
+  -drive file=ubuntu2_vm.qcow2,format=qcow2 \
+  -boot c \
+  -enable-kvm \
+  -cpu host \
+  -smp 2
+  -net nic
+  -net user,hostfwd=tcp::6022-:22 
 ```
