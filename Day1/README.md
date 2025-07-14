@@ -141,3 +141,17 @@ lsmod | grep kvm
 - Use other formats (VMDK, VDI, VHD) when exchanging VMs with other platforms
 </pre>
 
+## Info - Emulation vs Virtualization
+<pre>
+- These are two core concepts in system virtualization
+- QEMU can do both
+- But they serve different purposes 
+  - have major differences in performance, compatibility, and use cases
+- Emulation
+  - Imitates different hardware or architecture in software
+  - You can run code compiled for one platform (e.g., ARM) on another (e.g., x86)
+- Virtualization
+  - Runs code natively on the host CPU, using hardware support (like Intel VT-x, AMD-V)
+  - Only works when host and guest share the same architecture
+</pre>
+
