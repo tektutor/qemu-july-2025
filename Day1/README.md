@@ -155,6 +155,27 @@ lsmod | grep kvm
   - Only works when host and guest share the same architecture
 </pre>
 
+## Info - QEMU Supported Architectures & Platforms
+<pre>
+x86 - 32-bit General purpose Processors - AMD & Intel
+x86_64 - 64-bit General purpose Processors - AMD & Intel
+ARMv7 - 32-bit
+ARMv8 - 64-bit
+virt - Generic ARM Board
+raspi2, raspi3, raspi4 - Rasperrby Pi
+vexpress-a9 & versatilepb - Legacy Dev Boards
+PowerPC - 32-bit Processor
+PowerPC - 64-bit Processor
+MIPS & MIPS64
+RISC-V (RV32 / RV64)
+SPARC / SPARC64
+</pre>
+
+To get a complete list of target boards supported, try the below command
+```
+qemu-system-x86_64 -machine help
+```
+
 ## Info - Understanding QEMU command-line options
 <pre>
 Understanding QEMU’s command-line options is key to configuring and running virtual machines exactly how you need them — whether for emulation, virtualization, or advanced networking.  
