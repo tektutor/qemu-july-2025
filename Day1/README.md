@@ -250,6 +250,22 @@ qemu-system-x86_64 \
   -smp 2 
 ```
 
+Install ifconfig and ping command with the vm
+```
+sudo apt update && sudo apt install net-tools iputils-ping -y
+```
+
+To check if the SSH Server is running on the VM
+```
+sudo systemctl status ssh
+sudo systemctl start ssh
+sudo systemctl status ssh
+sudo ufw status # Whether the firewall is active or inactive
+sudo ufw start
+sudo ufw allow 22/tcp  # We are openning up the SSH port
+sudo ufw list
+```
+
 List running QEMU VMs from different terminal
 ```
 pgrep -a qemu
