@@ -1,5 +1,14 @@
 # Day 2
 
+## Info - What is the difference between normal OS copy command vs qemu-img clone
+<pre>
+- Normal copy command doesn’t preserve sparse files efficiently, uses more disk
+- Normal copy command is not QEMU format-aware, might break if metadata is modified
+- Normal copy command doesn't support conversion of one image format to other
+- Normal copy command doesn't support any compression supported by QEMU
+- Normal copy command won’t detect or prevent inconsistencies in the disk format  
+</pre>  
+
 ## Lab - Cloning a QEMU VM to create another Virtual machine
 
 Info
@@ -27,7 +36,7 @@ used read-only from vm1.qcow
   
 this helps to conservatively use the storage
   
-Faster, changes done in vm2 only goes to vm2
+Faster and space saving, changes done in vm2 only goes to vm2
 
 Drawback is, we won't be able to delete the VM1 disk if you wish to delete VM1 entirely while retaining VM2.
 </pre>
