@@ -221,3 +221,44 @@ monitor stdio
 d guest-errors
 - Enable debug output for guest errors
 </pre>
+
+## Lab - Create a VM using qcow2 virtual disk
+Create a Virtual Disk
+```
+qemu-img create -f qcow2 ubuntu_vm.qcow2 20G
+```
+
+Now let's install Ubuntu in the qcow2 Virtual Disk using ubuntu ISO
+```
+qemu-system-x86_64 \
+  -m 4G \
+  -cdrom ubuntu-24.04.2-live-server-amd64.iso \
+  -drive file=ubuntu_vm.qcow2,format=qcow2 \
+  -boot d \
+  -enable-kvm \
+  -cpu host \
+  -smp 2
+```
+
+Boot the VM 
+```
+qemu-system-x86_64 \
+  -m 4G \
+  -drive file=ubuntu_vm.qcow2,format=qcow2 \
+  -enable-kvm \
+  -cpu host \
+  -smp 2 
+```
+
+List running QEMU VMs from different terminal
+```
+pgrep -a qemu
+```
+
+Shutdown the VM and delete the disk
+```
+init 0
+## kill 31827 or kill -9 31827
+rm ubuntu_vm.qcow2
+# lsof -p 31827 | grep qcow2
+```
