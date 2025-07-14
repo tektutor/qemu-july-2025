@@ -258,6 +258,7 @@ sudo apt update && sudo apt install net-tools iputils-ping -y
 To check if the SSH Server is running on the VM
 ```
 sudo systemctl status ssh
+sudo systemctl enable ssh # Creates a service for SSH also ensure the service runs once the machine is rebooted
 sudo systemctl start ssh
 sudo systemctl status ssh
 sudo ufw status # Whether the firewall is active or inactive
