@@ -373,9 +373,16 @@ To create external disk snapshots, use a backing file and switch images
 ```
 qemu-img create -f qcow2 -b ubuntu_vm.qcow2 -F qcow2 ubuntu2_vm.qcow2
 ```
+In the above command
+<pre>
+-f - tells the disk image format(qcow2,raw,vmdk,etc) of the current hard disk used in the VM 
+-F - tells the output disk image format(qcow2,raw, vmdk, etc.) to save the machine state
+-b - indicates backing file, the snapshot file refers the original hard disk image file
+</pre>
 
 To create an internal snapshot
 ```
 qemu-img snapshot -c snapshot1 ubuntu_vm.qcow2
 ```
-
+The above command stores the shapshot1 within the existing hard disk image file ubuntu_vm.qcow2, hence won't
+create any new file
