@@ -15,11 +15,18 @@ qemu-img create -f qcow2 -b vm1.qcow2 vm2.qcow2
 In the above command
 <pre>
 -b creates a copy-on-write clone: vm2.qcow2 depends on vm1.qcow2
+  
 vm1.qcow2 - is the disk image used in existing virtual machine 1
+  
 vm2.qcow2 - is the new disk image created cloning the first virtual machine's disk image
+  
 vm2.qcow2 depends on vm1.qcow2
-any new changes done to the the vm2.qcow2 are stored in the vm2.qcow2, all existing changes are used read-only from vm1.qcows
+  
+any new changes done to the the vm2.qcow2 are stored in the vm2.qcow2, all existing changes are 
+used read-only from vm1.qcow
+  
 this helps to conservatively use the storage
+  
 Faster, but changes go to vm2 only
 </pre>
 
