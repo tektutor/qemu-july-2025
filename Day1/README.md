@@ -312,6 +312,7 @@ qemu-system-x86_64 \
 ```
 
 Boot the VM2
+```
 qemu-system-x86_64 \
   -m 4G \
   -drive file=ubuntu2_vm.qcow2,format=qcow2 \
