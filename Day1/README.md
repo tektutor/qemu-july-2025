@@ -245,6 +245,7 @@ Boot the VM
 qemu-system-x86_64 \
   -m 4G \
   -drive file=ubuntu_vm.qcow2,format=qcow2 \
+  -boot c \
   -enable-kvm \
   -cpu host \
   -smp 2
