@@ -27,7 +27,6 @@ If you prefer a full-clone
 ```
 qemu-img convert -f qcow2 -O qcow2 vm1.qcow2 vm2.qcow2
 ```
-
 In this case, vm2.qcow2 is an independent disk image 
 
 Launch the cloned VM2
@@ -44,3 +43,4 @@ After booting the second vm, we need to change the hostname avoid conflicts and 
 ```
 sudo hostnamectl set-hostname vm2
 ```
+
