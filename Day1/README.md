@@ -189,7 +189,8 @@ qemu-system-x86_64 -machine help
 
 ## Info - Understanding QEMU command-line options
 <pre>
-Understanding QEMU’s command-line options is key to configuring and running virtual machines exactly how you need them — whether for emulation, virtualization, or advanced networking.  
+Understanding QEMU’s command-line options is key to configuring and running virtual machines 
+exactly how you need them — whether for emulation, virtualization, or advanced networking.  
 </pre>
 
 Common Switches
@@ -296,7 +297,8 @@ qemu-system-x86_64 \
   -net user,hostfwd=tcp::5022-:22 
 ```
 <pre>
-- The difference between the first command and the command above is, we wanted to boot the OS from hard disk rather than CDROM as we have already installed the OS using the first command in this lab exercise
+- The difference between the first command and the command above is, we wanted to boot the OS from hard disk 
+  rather than CDROM as we have already installed the OS using the first command in this lab exercise
 -m 4G - allocates -4GB RAM
 -drive file=ubuntu_vm.qcow2,format=qcow2 - hard disk emulated by the file based disk image, qcow2 is the native image format of QEMU
 -cpu host - same CPU architecture as Host machine, as our lab machine is Intel/AMD x86_64 bit Processor, same CPU architecture will be supported in the Guest OS(VM) 
@@ -341,7 +343,8 @@ rm ubuntu_vm.qcow2
 
 ## Info - What is a Snapshot in QEMU?
 <pre>
-- Snapshot helps store the current state of the machine, just like we can Hibernate our laptop and resume later quickly without rebooting the machine as it is very fast
+- Snapshot helps store the current state of the machine, just like we can Hibernate our laptop 
+  and resume later quickly without rebooting the machine as it is very fast
 - Snapshots requires qcow2 format, raw disk format doesn't support taking snapshots
 - QEMU supports several types of snapshots
 - captures RAM/CPU/device/disk states
@@ -349,11 +352,13 @@ rm ubuntu_vm.qcow2
 
 ## Info - Types of Snapshots supported in QEMU
 <pre>
-1. VM State Snapshots a.k.a Live Snapshots ( similar to Hypernating your laptop state and resuming later when you open the laptop )
+1. VM State Snapshots a.k.a Live Snapshots
+   - similar to Hibernating your laptop state when you close the laptop and resumes later when you open the laptop
 2. Disk Snapshots
    - There are 2 types
      1. Internal ( stored inside the qcow2 disk image, hence it won't create a separate file ) 
-     2. External ( creates a separate file, refers the base image, hence the snapshot file will be smaller than original disk image file )
+     2. External ( creates a separate file, refers the base image, hence the snapshot file will be 
+        smaller than original disk image file )
 3. Snapshot mode 
    - changes are stored in RAM, will loose the changes when machine is rebooted
    - good for testing destructive scenarios
