@@ -339,6 +339,25 @@ rm ubuntu_vm.qcow2
 # lsof -p 31827 | grep qcow2
 ```
 
+## Info - What is a Snapshot in QEMU?
+<pre>
+- Snapshot helps store the current state of the machine, just like we can Hibernate our laptop and resume later quickly without rebooting the machine as it is very fast
+- Snapshots requires qcow2 format, raw disk format doesn't support taking snapshots
+- QEMU supports several types of snapshots
+- captures RAM/CPU/device/disk states
+</pre>
+
+## Info - Types of Snapshots supported in QEMU
+<pre>
+1. VM State Snapshots a.k.a Live Snapshots ( similar to Hypernating your laptop state and resuming later when you open the laptop )
+2. Disk Snapshots
+   - There are 2 types
+     1. Internal ( stored inside the qcow2 disk image, hence it won't create a separate file ) 
+     2. External ( creates a separate file, refers the base image, hence the snapshot file will be smaller than original disk image file )
+3. Snapshot mode 
+   - changes are stored in RAM, will loose the changes when machine is rebooted
+   - good for testing destructive scenarios
+</pre>
 
 
 ## Lab - Creating a snapshot ( ie copy vm1 as vm2 to clone )
