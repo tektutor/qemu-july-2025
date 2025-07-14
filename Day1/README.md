@@ -247,7 +247,9 @@ qemu-system-x86_64 \
   -drive file=ubuntu_vm.qcow2,format=qcow2 \
   -enable-kvm \
   -cpu host \
-  -smp 2 
+  -smp 2
+  -net nic
+  -net user,hostfwd=tcp::5022-:22 
 ```
 
 Install ifconfig and ping command with the vm
@@ -265,6 +267,11 @@ sudo ufw status # Whether the firewall is active or inactive
 sudo ufw start
 sudo ufw allow 22/tcp  # We are openning up the SSH port
 sudo ufw list
+```
+
+To shutdown the machine from the VM's terminal
+```
+sudo poweroff
 ```
 
 List running QEMU VMs from different terminal
