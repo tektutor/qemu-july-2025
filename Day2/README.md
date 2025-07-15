@@ -286,7 +286,7 @@ Let's create a VM with ubuntu-22.04
 qemu-system-x86_64 \
   -m 4G \
   -enable-kvm \
-  -cpu host
+  -cpu host \
   -cdrom ubuntu-22.04.5-live-server-amd64.iso \
   -boot d \
   -drive file=ubuntu1.qcow2,format=qcow2 \
