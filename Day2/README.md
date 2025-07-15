@@ -300,7 +300,7 @@ All the below command we need to perform within the ubuntu 22.04 vm
 Install required softwares on the host linux machine 
 ```
 sudo apt update
-sudo apt install build-essential libncurses-dev flex bison libssl-dev libelf-dev qemu-system-x86 busybox -y
+sudo apt install net-tools tree iputils-ping build-essential libncurses-dev flex bison libssl-dev libelf-dev qemu-system-x86 busybox -y
 ```
 
 Download and Compile Linux Kernel
