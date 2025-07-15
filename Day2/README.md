@@ -292,8 +292,7 @@ qemu-system-x86_64 \
   -drive file=ubuntu1.qcow2,format=qcow2 \
   -smp 4 \
   -net user,hostfwd=tcp::2222-:22 \
-  -net nic \
-  -nographic
+  -net nic 
 ```
 
 All the below command we need to perform within the ubuntu 22.04 vm
