@@ -273,6 +273,31 @@ ip link show | grep br
 ```
 
 ## Lab - Build a minimal linux with custom kernel
+
+Linux kernel build officially only supports upto Ubuntu 22.04, hence building from ubuntu latest versions we will report build errors, hence let's create a VM with ubuntu 22.04
+
+Download Ubuntu 22.04
+```
+wget https://releases.ubuntu.com/jammy/ubuntu-22.04.5-live-server-amd64.iso
+```
+
+Let's create a VM with ubuntu-22.04
+```
+qemu-system-x86_64 \
+  -m 4G \
+  -enable-kvm \
+  -cpu host
+  -cdrom ubuntu-22.04.5-live-server-amd64.iso \
+  -boot d \
+  -drive file=ubuntu1.qcow2,format=qcow2
+  -smp 4
+  -net user,hostfwd=tcp::2222-:22
+  -net nic
+  -nographic
+```
+
+All the below command we need to perform within the ubuntu 22.04 vm
+
 Install required softwares on the host linux machine 
 ```
 sudo apt update
@@ -310,6 +335,7 @@ tar -xf busybox-1.36.1.tar.bz2 && cd busybox-1.36.1
 make defconfig
 make menuconfig
 ```
+
 
 In menuconfig, enable Build BusyBox as a static binary under Settings
 ```
