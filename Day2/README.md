@@ -272,4 +272,88 @@ sudo ip link delete br0 type bridge
 ip link show | grep br
 ```
 
+## Lab - Build a minimal linux with custom kernel
+Install required softwares on the host linux machine 
+```
+sudo apt update
+sudo apt install build-essential libncurses-dev flex bison libssl-dev libelf-dev qemu-system-x86 busybox -y
+```
+
+Download and Compile Linux Kernel
+```
+mkdir ~/linux-minimal && cd ~/linux-minimal
+wget https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.9.tar.xz
+tar -xf linux-6.9.tar.xz && cd linux-6.9
+```
+
+Configure the Kernel
+```
+make defconfig   # Generates a default config
+make menuconfig  # Optional: for customizing features (e.g. disable modules, enable early printk)
+```
+
+Build the Kernel
+```
+make -j$(nproc)
+```
+
+Create a minimal root file system
+```
+cd ~/linux-minimal
+mkdir -p rootfs/{bin,sbin,etc,proc,sys,usr/bin,usr/sbin,dev}
+```
+
+Download and build busybox
+```
+wget https://busybox.net/downloads/busybox-1.36.1.tar.bz2
+tar -xf busybox-1.36.1.tar.bz2 && cd busybox-1.36.1
+make defconfig
+make menuconfig
+```
+
+In menuconfig, enable Build BusyBox as a static binary under Settings
+```
+make -j$(nproc)
+make CONFIG_PREFIX=../rootfs install
+```
+
+Create device nodes
+```
+cd ~/linux-minimal/rootfs
+sudo mknod -m 622 dev/console c 5 1
+sudo mknod -m 666 dev/null c 1 3
+```
+
+Create an Init Script, vim init
+```
+#!/bin/sh
+mount -t proc none /proc
+mount -t sysfs none /sys
+echo "Welcome to minimal Linux!"
+/bin/sh
+```
+
+Make the init scrip executable
+```
+chmod +x init
+```
+
+Pack Root Filesystem into Initramfs
+```
+cd ~/linux-minimal/rootfs
+find . -print0 | cpio --null -ov --format=newc | gzip -9 > ../initramfs.cpio.gz
+```
+
+Boot with QEMU
+```
+cd ~/linux-minimal
+qemu-system-x86_64 -kernel linux-6.9/arch/x86/boot/bzImage \
+  -initrd initramfs.cpio.gz \
+  -nographic -append "console=ttyS0"
+```
+
+Expected output
+```
+Welcome to minimal Linux!
+```
 
