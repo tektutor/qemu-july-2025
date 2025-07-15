@@ -332,19 +332,27 @@ cd ~/linux-minimal
 mkdir -p rootfs/{bin,sbin,etc,proc,sys,usr/bin,usr/sbin,dev}
 ```
 
-Download and build busybox
+Download and build busybox. In menuconfig, enable Build BusyBox as a static binary under Settings
+
 ```
-wget https://busybox.net/downloads/busybox-1.36.1.tar.bz2
-tar -xf busybox-1.36.1.tar.bz2 && cd busybox-1.36.1
+cd ~/linux-minimal
+git clone https://git.busybox.net/busybox
+cd busybox
 make defconfig
-make menuconfig
-```
-
-
-In menuconfig, enable Build BusyBox as a static binary under Settings
-```
+make menuconfig   # Enable "Build static binary"
 make -j$(nproc)
-make CONFIG_PREFIX=../rootfs install
+make CONFIG_PREFIX=./_install install
+cd ~/linux-minimal/busybox/_install
+
+# Create a new /init script
+cat > init << 'EOF'
+#!/bin/sh
+mount -t proc none /proc
+mount -t sysfs none /sys
+echo "Welcome to our Minimal Linux OS !"
+exec /bin/sh
+EOF
+chmod +x init
 ```
 
 Create device nodes
@@ -354,24 +362,10 @@ sudo mknod -m 622 dev/console c 5 1
 sudo mknod -m 666 dev/null c 1 3
 ```
 
-Create an Init Script, vim init
-```
-#!/bin/sh
-mount -t proc none /proc
-mount -t sysfs none /sys
-echo "Welcome to minimal Linux!"
-/bin/sh
-```
-
-Make the init scrip executable
-```
-chmod +x init
-```
-
 Pack Root Filesystem into Initramfs
 ```
 cd ~/linux-minimal/rootfs
-find . -print0 | cpio --null -ov --format=newc | gzip -9 > ../initramfs.cpio.gz
+find . | cpio -H newc -o --owner=root:root > ../../initramfs.cpio
 ```
 
 Boot with QEMU
