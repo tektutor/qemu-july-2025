@@ -177,10 +177,99 @@ In VM1 terminal
 poweroff
 ```
 
+
 In VM2 terminal
 ```
 poweroff
 ```
 
+## Lab - VM1 to VM2 communication over Tap device
+Note
+```
+- Without a bridge
+  - each TAP interface is isolated
+  - VMs wouldn’t be able to talk to each other unless you manually set up routing or forwarding
+```
+
+Let's create the tap device one per VM
+```
+# Create tap interfaces
+sudo ip tuntap add tap0 mode tap user $(whoami)
+sudo ip tuntap add tap1 mode tap user $(whoami)
+
+# Bring them up
+sudo ip link set tap0 up
+sudo ip link set tap1 up
+
+sudo ip link add name br0 type bridge
+# Add TAP interfaces to bridge
+sudo ip link set tap0 master br0
+sudo ip link set tap1 master br0
+sudo ip link set br0 up
+```
+
+Start VM1
+```
+qemu-system-x86_64 \
+  -m 512 \
+  -enable-kvm \
+  -cdrom alpine-standard-3.20.0-x86_64.iso \
+  -boot d \
+  -netdev tap,id=net0,ifname=tap0,script=no,downscript=no \
+  -device e1000,netdev=net0,mac=52:54:00:00:00:01 \
+  -nographic
+```
+
+Start VM2
+```
+qemu-system-x86_64 \
+  -m 512 \
+  -enable-kvm \
+  -cdrom alpine-standard-3.20.0-x86_64.iso \
+  -boot d \
+  -netdev tap,id=net1,ifname=tap1,script=no,downscript=no \
+  -device e1000,netdev=net1,mac=52:54:00:00:00:02 \
+  -nographic
+```
+
+On the VM1 terminal, assign IP address to the VM manually
+```
+sudo ip addr add 192.168.100.1/24 dev eth0
+sudo ip link set eth0 up
+```
+
+On the VM2 terminal, assign IP address to the VM manually
+```
+sudo ip addr add 192.168.100.2/24 dev eth0
+sudo ip link set eth0 up
+```
+
+Test the connectivity, ping VM2 from VM1
+```
+ping 192.168.100.2
+```
+
+Test the connectivity, ping VM1 from VM2
+```
+ping 192.168.100.1
+```
+
+Cleanup on the local machine
+```
+sudo ip link set tap0 nomaster
+sudo ip link set tap1 nomaster
+
+sudo ip link set tap0 down
+sudo ip link set tap1 down
+
+sudo ip tuntap del mode tap dev tap0
+sudo ip tuntap del mode tap dev tap1
+
+sudo ip link set br0 down
+sudo ip link delete br0 type bridge
+
+# Verify
+ip link show | grep br
+```
 
 
