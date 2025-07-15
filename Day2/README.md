@@ -101,5 +101,86 @@ sudo hostnamectl set-hostname vm2
   7. Multiqueue ( High Performance )
 </pre>
 
+## Lab - VM1 to VM2 communication via Socket
+
+Download the alpine linux iso
+```
+mkdir ~/qemu
+cd ~/qemu
+wget https://dl-cdn.alpinelinux.org/alpine/v3.20/releases/x86_64/alpine-standard-3.20.0-x86_64.iso
+```
+
+Create the first VM using with alpine cloud image live boot (Terminal 1)
+```
+qemu-system-x86_64 \
+  -m 512 \
+  -enable-kvm \
+  -cdrom alpine-standard-3.20.0-x86_64.iso \
+  -boot d \
+  -netdev socket,id=net0,listen=:1234 \
+  -device virtio-net-pci,netdev=net0 \
+  -nographic
+```
+
+Create the first VM using with alpine cloud image live boot (Terminal 2)
+```
+qemu-system-x86_64 \
+  -m 512 \
+  -enable-kvm \
+  -cdrom alpine-standard-3.20.0-x86_64.iso \
+  -boot d \
+  -netdev socket,id=net0,connect=127.0.0.1:1234 \
+  -device virtio-net-pci,netdev=net0 \
+  -nographic
+```
+
+In VM1 terminal
+```
+ip a
+ip addr add 10.0.0.1/24 dev eth0
+ip link set eth0 up
+ip a
+```
+
+In VM2 terminal
+```
+ip a
+ip addr add 10.0.0.2/24 dev eth0
+ip link set eth0 up
+ip a
+```
+
+Ping VM2 IP address from VM1 terminal
+```
+ping 10.0.0.2
+```
+
+Ping VM1 IP address from VM2 terminal
+```
+ping 10.0.0.1
+```
+
+Let's test the socket communicaiton between VM1 and VM2, on VM1 let's start the socket server
+```
+nc -l -p 12345
+```
+
+From VM2, let's connect to socket server
+```
+echo "hello from vm2" | nc 10.0.0.2 12345
+```
+
+Once you are done with the VMs, let's poweroff both VMs
+
+In VM1 terminal
+```
+poweroff
+```
+
+In VM2 terminal
+```
+poweroff
+```
+
 
 
