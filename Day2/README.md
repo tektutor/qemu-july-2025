@@ -303,7 +303,12 @@ sudo apt update
 sudo apt install net-tools tree iputils-ping build-essential libncurses-dev flex bison libssl-dev libelf-dev qemu-system-x86 busybox -y
 ```
 
-Download and Compile Linux Kernel
+Either you can copy the linux-6.9 kernel source code once again into the ubuntu 22.04 vm or you copy this from your host machine(training machine), do this from ubuntu 22.04 new vm terminal
+```
+scp <your-lab-machine-user>@<substitute-your-lab-machine-ip-here>:<substitute-your-path>/linux-6.9.tar.xz . 
+```
+
+Instead of above step, you could also download and Compile Linux Kernel
 ```
 mkdir ~/linux-minimal && cd ~/linux-minimal
 wget https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.9.tar.xz
