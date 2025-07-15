@@ -100,3 +100,6 @@ sudo hostnamectl set-hostname vm2
   6. VDE ( Virtual Distributed Ethernet - not widely used, you won't require this type of network for your usecases )
   7. Multiqueue ( High Performance )
 </pre>
+
+
+
