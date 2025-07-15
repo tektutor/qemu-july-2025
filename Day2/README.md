@@ -343,8 +343,9 @@ make menuconfig   # Enable "Build static binary"
 make -j$(nproc)
 make CONFIG_PREFIX=./_install install
 cd ~/linux-minimal/busybox/_install
+```
 
-# Create a new /init script
+#Create a new /init script
 cat > init << 'EOF'
 #!/bin/sh
 mount -t proc none /proc
@@ -357,22 +358,28 @@ chmod +x init
 
 Create device nodes
 ```
-cd ~/linux-minimal/rootfs
+cd ~/linux-minimal/busybox/_install
 sudo mknod -m 622 dev/console c 5 1
 sudo mknod -m 666 dev/null c 1 3
 ```
 
 Pack Root Filesystem into Initramfs
 ```
-cd ~/linux-minimal/rootfs
+cd ~/linux-minimal/busybox/_install
 find . | cpio -H newc -o --owner=root:root > ../../initramfs.cpio
 ```
 
-Boot with QEMU
+Copy the compiled binaris
+```
+cp ~/linux-minimal/linux-6.9/arch/x86/boot/bzImage /mnt/build
+cp ~/linux-minimal/initramfs.cpio /mnt/build
+```
+
+From the host machine, Boot with QEMU
 ```
 cd ~/linux-minimal
-qemu-system-x86_64 -kernel linux-6.9/arch/x86/boot/bzImage \
-  -initrd initramfs.cpio.gz \
+qemu-system-x86_64 -kernel /home/jegan/qemu-share/bzImage \
+  -initrd /home/jegan/qemu-share/initramfs.cpio \
   -nographic -append "console=ttyS0"
 ```
 
