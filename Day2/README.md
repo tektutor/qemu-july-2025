@@ -289,10 +289,10 @@ qemu-system-x86_64 \
   -cpu host
   -cdrom ubuntu-22.04.5-live-server-amd64.iso \
   -boot d \
-  -drive file=ubuntu1.qcow2,format=qcow2
-  -smp 4
-  -net user,hostfwd=tcp::2222-:22
-  -net nic
+  -drive file=ubuntu1.qcow2,format=qcow2 \
+  -smp 4 \
+  -net user,hostfwd=tcp::2222-:22 \
+  -net nic \
   -nographic
 ```
 
