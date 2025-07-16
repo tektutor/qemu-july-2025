@@ -126,7 +126,31 @@ lsusb
 ## Info - Troubleshooting common KVM-related issues
 <pre>
 - Problem - KVM Module Not Loaded or Missing
-  Fix, run the below commands
-    sudo modprobe kvm
-    sudo modprobe kvm_intel  
+  Solution - run the below commands
+    sudo modprobe kvm, 
+    sudo modprobe kvm_intel 
+  Check if modules are loaded
+    lsmod | grep kvm
+  If not available, ensure Virtualization is enabled in BIOS(VT-X/AMD-V)
+  - Check CPU support, use the below command
+       egrep -c '(vmx|svm)' /proc/cpuinfo
+- Permission Denied
+  Problem - Could not access KVM kernel module: Permission denied
+  Solution - Add the user to kvm user group with the below command
+     sudo usermod -aG kvm $USER
+     newgrp kvm
+     sudo chmod 666 /dev/kvm
+- Peformance issues
+  - qemu-system-xxx commands runs 100% on CPU
+  - use virtio drivers as much as possible
+  - always use enable-kvm, cpu host options when possible
+  - -machine accel=kvm:tcg
+- Nested Virtualization Doesn’t Work
+  - Enable nested VM
+    # Intel
+      echo "Y" | sudo tee /sys/module/kvm_intel/parameters/nested
+    # AMD
+      echo "1" | sudo tee /sys/module/kvm_amd/parameters/nested
+    # Check
+      cat /sys/module/kvm_intel/parameters/nested
 </pre>
