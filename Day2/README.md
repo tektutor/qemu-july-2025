@@ -359,7 +359,7 @@ echo -e "\033[36mHit enter button to access the shell\033[0m"
 printf "\033[1;31mYou may use poweroff -f, once you are done ...\033[0m\n"
 
 # Shell with job control
-setsid /bin/sh
+exec setsid /bin/sh
 
 echo "Attempting to shut down..."
 
