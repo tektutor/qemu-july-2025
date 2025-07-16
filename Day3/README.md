@@ -72,8 +72,8 @@ rootfstype=ext4 rw" \
 -no-reboot \
 -vga std \
 -display gtk
+#-bios qemu/pc-bios/bios.bin
 ````
-
 ## Lab - Build a custom Embedded Linux Kernel for ARM and boot with QEMU
 
 
