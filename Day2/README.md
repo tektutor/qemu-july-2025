@@ -331,11 +331,6 @@ sudo apt update
 sudo apt install net-tools tree iputils-ping build-essential libncurses-dev flex bison libssl-dev libelf-dev qemu-system-x86 busybox -y
 ```
 
-Either you can copy the linux-6.9 kernel source code once again into the ubuntu 22.04 vm or you copy this from your host machine(training machine), do this from ubuntu 22.04 new vm terminal
-```
-scp <your-lab-machine-user>@<substitute-your-lab-machine-ip-here>:<substitute-your-path>/linux-6.9.tar.xz . 
-```
-
 Instead of above step, you could also download and Compile Linux Kernel
 ```
 mkdir ~/linux-minimal && cd ~/linux-minimal
@@ -355,10 +350,6 @@ make -j$(nproc)
 ```
 
 Create a minimal root file system
-```
-cd ~/linux-minimal
-mkdir -p rootfs/{bin,sbin,etc,proc,sys,usr/bin,usr/sbin,dev}
-```
 
 Download and build busybox. In menuconfig, enable Build BusyBox as a static binary under Settings
 
