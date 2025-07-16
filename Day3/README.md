@@ -95,3 +95,33 @@ Find the USB deviceid
 ```
 lsusb
 ```
+
+## Info - QEMU/KVM Performance Optimizations
+<pre>
+- use -enable-kvm and -cpu host 
+- Allocate sufficient CPU cores and RAM to VM ( e.g -smp 8 -m 8192 )
+- Disk optimizations
+  - -drive file=disk.qcow2,if=virtio,cache=none,format=qcow2
+  - cache=none
+    - bypasses host page cache, reducing latency and improving consistency
+  - use raw disks, raw disk are faster than qcow2
+    -drive file=disk.img,format=raw
+- Network Performance
+  - User virtio-net
+    - -netdev tap,id=net0,ifname=tap0,script=no,downscript=no \
+      -device virtio-net-pci,netdev=net0
+  - Enable Multi-Queue
+    -device virtio-net-pci,netdev=net0,mq=on,vectors=10
+  - Use vhost-net
+    - -netdev tap,...,vhost=on
+- Use Huge Pages
+  - -mem-prealloc -mem-path /dev/hugepages
+  - Makes sure huge pages are supported
+    - echo 512 > /proc/sys/vm/nr_hugepages
+    - mkdir -p /dev/hugepages
+    - mount -t hugetlbfs none /dev/hugepages
+- Disable unnecessary devices
+
+
+
+</pre>
