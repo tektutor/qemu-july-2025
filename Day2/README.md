@@ -294,6 +294,12 @@ Download Ubuntu 22.04
 wget https://releases.ubuntu.com/jammy/ubuntu-22.04.5-live-server-amd64.iso
 ```
 
+You need to create folder in your host machine
+```
+mkdir -p ~/qemu-share
+```
+
+
 Let's create a VM with ubuntu-22.04
 ```
 qemu-system-x86_64 \
@@ -310,6 +316,12 @@ qemu-system-x86_64 \
 -fsdev local,id=fsdev0,path=$HOME/qemu-share,security_model=none \
 -device virtio-9p-pci,fsdev=fsdev0,mount_tag=hostshare
 ```
+
+Inside the Guest VM Shell, you need to run this
+```
+sudo mount -t 9p -o trans=virtio hostshare /mnt/build
+```
+
 
 All the below command we need to perform within the ubuntu 22.04 vm
 
