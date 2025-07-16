@@ -117,14 +117,15 @@ cp ../init .
 
 #### Download and build Busybox (Do this inside Initramfs folder)
 ```
-wget https://busybox.net/downloads/busybox-1.36.1.tar.bz2
-tar xf busybox-1.36.1.tar.bz2
-cd busybox-1.36.1
+git clone https://git.busybox.net/busybox
+cd busybox
 make defconfig
 make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi-
 make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- install CONFIG_PREFIX=../
 cd ..
 chmod u+s bin/busybox
+#make CONFIG_PREFIX=./_install install
+#cd ~/linux-minimal/busybox/_install
 ```
 
 #### Create device nodes
@@ -136,8 +137,7 @@ sudo mknod -m 666 initramfs/dev/null c 1 3
 #### Pack the initramfs
 ```
 cd initramfs
-find . | cpio -H newc -ov --owner root:root > ../initramfs.cpio
-cd ..
+find . | cpio -H newc -o --owner=root:root > ../../initramfs.cpio
 ```
 
 #### Boot the Linux kernel with QEMU
