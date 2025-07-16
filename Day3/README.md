@@ -1,71 +1,150 @@
 # Day 3
 
-## Lab - Build a Raspberry Pi OS Image, create a VM with QEMU emulating Raspberry Pi 
-
-The qemu-system-arm package is necessary for emulating ARM devices like the Raspberry Pi.
+## Lab - Emulate Raspberry Pi with existing images
+In case QEMU isn't installed already
 ```
-sudo apt-get install qemu-system-arm
-```
-
-Get the Kernel Source Code: Clone the Raspberry Pi Linux kernel repository from GitHub
-```
-mkdir ~/raspi-kernel
-cd ~/raspi-kernel
-git clone https://github.com/raspberrypi/linux.git
-```
-#### Kernel Configuration
-Choose the correct configuration
-For Raspberry Pi 3 (64-bit kernel):
-```
-cd ~/raspi-kernel/linux
-KERNEL=kernel8
-make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bcm2711_defconfig
+sudo apt-get install qemu-system -y
 ```
 
-For Raspberry Pi 4 (64-bit kernel): use bcm2711_defconfig.
-For Raspberry Pi 5 (64-bit kernel): use bcm2712_defconfig.
-For Raspberry Pi 1 (32-bit kernel):
+Let's create a folder to maintain all the dependent files under that
 ```
-cd ~/raspi-kernel/linux
-KERNEL=kernel
-make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- bcmrpi_defconfig
-```
-Optional: Customizing the configuration: Use make menuconfig to customize the kernel features.
-```
-make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- menuconfig  # For 64-bit kernels
+mkdir -p ~/qemu-raspi
+cd ~/qemu-raspi
 ```
 
-Build the kernel image, modules, and device tree blobs (DTBs): Use the appropriate make command for your architecture (64-bit or 32-bit).
+Let's download raspberrypi os, pre-built kernel
 ```
-# For a 64-bit kernel
-make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- Image modules dtbs -j24
-
-# For a 32-bit kernel
-make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- zImage modules dtbs -j24
+cd ~/qemu-raspi
+wget https://downloads.raspberrypi.org/raspbian/images/raspbian-2017-04-10/2017-04-10-raspbian-jessie.zip
+wget https://github.com/dhruvvyas90/qemu-rpi-kernel/blob/master/kernel-qemu-4.4.34-jessie
+unzip 2017-04-10-raspbian-jessie.zip
 ```
 
+We need to locate the exact location where the OS image starts in the img disk partition
+```
+fdisk -l ./2017-04-10-raspbian-jessie.img
+```
 <pre>
-Preparing the Raspberry Pi Image for QEMU
-- Download and prepare a Raspberry Pi OS image: Obtain an image from the Raspberry Pi website, unzip it, and rename it.
-- Modify /etc/fstab: If needed, change /dev/mmcblk0pX entries to /dev/vdaX for QEMU.
-- Mount the image and enable SSH: Mount the image using its partition offset, create an empty ssh file to enable SSH on boot, and optionally set a default user and password. Remember to unmount the image afterward.
-- Obtain a suitable DTB file: Find a Device Tree Blob file within the kernel source tree that describes your hardware to the kernel. 
+jegan@tektutor.org $ fdisk -l ./2017-04-10-raspbian-jessie.img
+Disk ./2017-04-10-raspbian-jessie.img: 3.99 GiB, 4285005824 bytes, 8369152 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x402e4a57
+
+Device                            Boot Start     End Sectors  Size Id Type
+./2017-04-10-raspbian-jessie.img1       8192   92159   83968   41M  c W95 FAT32 (LBA)
+./2017-04-10-raspbian-jessie.img2      92160 8369151 8276992  3.9G 83 Linux  
 </pre>
 
+We are only interested in the second partition, let's do some math
+<pre>
+92160 * 512 = 47185920
+</pre>
 
-Booting the Raspberry Pi emulated device with QEMU
+Let's use the above as an offset while mounting the img file
 ```
-qemu-system-aarch64 -machine virt -cpu cortex-a72 -smp 6 -m 4G \
--kernel <path-to-your-built-kernel-Image> -append "root=/dev/vda2 rootfstype=ext4 rw panic=0 console=ttyAMA0" \
--drive format=raw,file=<path-to-your-rpi-image>.img,if=none,id=hd0,cache=writeback \
--device virtio-blk,drive=hd0,bootindex=0 \
--netdev user,id=mynet,hostfwd=tcp::2222-:22 \
--device virtio-net-pci,netdev=mynet
+sudo mkdir -p /mnt/raspbian
+sudo mount -v -o offset=47185920 -t ext4 ~/qemu-raspi/2017-04-10-raspbian-jessie.img /mnt/raspbian
 ```
 
-Accessing the emulated Raspberry Pi
+Edit the /mnt/raspbian/etc/fstab 
 ```
-ssh -l pi localhost -p 2222
+sudo vim /mnt/raspbian/etc/fstab
+```
+If you see anything with mmcblk0 in fstab, then:
+
+Replace the first entry containing /dev/mmcblk0p1 with /dev/sda1
+Replace the second entry containing /dev/mmcblk0p2 with /dev/sda2, other lines can be commented out, save and exit.
+
+Now we can emutate as shown below
+```
+qemu-system-arm \
+-kernel ~/qemu_vms/kernel-qemu-4.4.34-jessie \
+-cpu arm1176 \
+-m 256 \
+-M versatilepb \
+-serial stdio \
+-append "root=/dev/sda2 \
+rootfstype=ext4 rw" \
+-hda ~/qemu_vms/2017-04-10-raspbian-jessie.img \
+-no-reboot  
+```
+
+## Lab - Build a custom Embedded Linux Kernel for ARM and boot with QEMU
+
+
+#### Install Required Packages
+
+```
+sudo apt update
+sudo apt install -y git build-essential gcc-arm-linux-gnueabi qemu-system-arm libncurses-dev bison flex libssl-dev
+```
+
+#### Download the Linux Kernel Source
+```
+cd ~
+git clone --depth=1 https://github.com/torvalds/linux.git
+cd linux
+```
+
+#### Configure the Kernel for ARM
+```
+make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- versatile_defconfig
+```
+
+#### Build the Kernel Image
+```
+make -j$(nproc) ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- zImage
+```
+
+#### Create an init script
+```
+echo -e '#!/bin/sh\nmount -t proc none /proc\nmount -t sysfs none /sys\nexec /bin/busybox sh' > init
+chmod +x init
+```
+
+
+#### Build a Simple Initramfs (Root Filesystem)
+```
+cd ~
+mkdir initramfs
+cd initramfs
+mkdir -p bin sbin etc proc sys usr/bin usr/sbin dev tmp
+cp ../init .
+```
+
+#### Download and build Busybox (Do this inside Initramfs folder)
+```
+wget https://busybox.net/downloads/busybox-1.36.1.tar.bz2
+tar xf busybox-1.36.1.tar.bz2
+cd busybox-1.36.1
+make defconfig
+make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi-
+make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- install CONFIG_PREFIX=../
+cd ..
+chmod u+s bin/busybox
+```
+
+#### Create device nodes
+```
+sudo mknod -m 666 initramfs/dev/console c 5 1
+sudo mknod -m 666 initramfs/dev/null c 1 3
+```
+
+#### Pack the initramfs
+```
+cd initramfs
+find . | cpio -H newc -ov --owner root:root > ../initramfs.cpio
+cd ..
+```
+
+#### Boot the Linux kernel with QEMU
+```
+qemu-system-arm -M versatilepb -m 128M -kernel linux/arch/arm/boot/zImage \
+  -initrd initramfs.cpio -append "console=ttyAMA0 rdinit=/init" \
+  -nographic
 ```
 
 
