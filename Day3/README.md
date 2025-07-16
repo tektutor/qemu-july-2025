@@ -9,15 +9,15 @@ sudo apt-get install qemu-system-arm
 
 Get the Kernel Source Code: Clone the Raspberry Pi Linux kernel repository from GitHub
 ```
-mkdir kernel
-cd kernel
+mkdir ~/raspi-kernel
+cd ~/raspi-kernel
 git clone https://github.com/raspberrypi/linux.git
 ```
 #### Kernel Configuration
 Choose the correct configuration
 For Raspberry Pi 3 (64-bit kernel):
 ```
-cd linux
+cd ~/raspi-kernel/linux
 KERNEL=kernel8
 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bcm2711_defconfig
 ```
@@ -26,7 +26,7 @@ For Raspberry Pi 4 (64-bit kernel): use bcm2711_defconfig.
 For Raspberry Pi 5 (64-bit kernel): use bcm2712_defconfig.
 For Raspberry Pi 1 (32-bit kernel):
 ```
-cd linux
+cd ~/raspi-kernel/linux
 KERNEL=kernel
 make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- bcmrpi_defconfig
 ```
