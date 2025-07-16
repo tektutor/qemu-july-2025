@@ -355,7 +355,8 @@ mount -t tmpfs tmpfs /tmp
 
 printf "\033[1;32mWelcome to our custom BusyBox OS !\033[0m\n"
 echo -e "\033[36mHit enter button to access the shell\033[0m"
-echo "You may use poweroff -f, once you are done ..."
+
+printf "\033[1;31mYou may use poweroff -f, once you are done ...\033[0m\n"
 
 # Shell with job control
 setsid /bin/sh
