@@ -1,5 +1,73 @@
 # Day 3
 
+## Lab - Build a Raspberry Pi OS Image, create a VM with QEMU emulating Raspberry Pi 
+
+The qemu-system-arm package is necessary for emulating ARM devices like the Raspberry Pi.
+```
+sudo apt-get install qemu-system-arm
+```
+
+Get the Kernel Source Code: Clone the Raspberry Pi Linux kernel repository from GitHub
+```
+mkdir kernel
+cd kernel
+git clone https://github.com/raspberrypi/linux.git
+```
+#### Kernel Configuration
+Choose the correct configuration
+For Raspberry Pi 3 (64-bit kernel):
+```
+cd linux
+KERNEL=kernel8
+make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bcm2711_defconfig
+```
+
+For Raspberry Pi 4 (64-bit kernel): use bcm2711_defconfig.
+For Raspberry Pi 5 (64-bit kernel): use bcm2712_defconfig.
+For Raspberry Pi 1 (32-bit kernel):
+```
+cd linux
+KERNEL=kernel
+make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- bcmrpi_defconfig
+```
+Optional: Customizing the configuration: Use make menuconfig to customize the kernel features.
+```
+make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- menuconfig  # For 64-bit kernels
+```
+
+Build the kernel image, modules, and device tree blobs (DTBs): Use the appropriate make command for your architecture (64-bit or 32-bit).
+```
+# For a 64-bit kernel
+make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- Image modules dtbs -j24
+
+# For a 32-bit kernel
+make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- zImage modules dtbs -j24
+```
+
+<pre>
+Preparing the Raspberry Pi Image for QEMU
+- Download and prepare a Raspberry Pi OS image: Obtain an image from the Raspberry Pi website, unzip it, and rename it.
+- Modify /etc/fstab: If needed, change /dev/mmcblk0pX entries to /dev/vdaX for QEMU.
+- Mount the image and enable SSH: Mount the image using its partition offset, create an empty ssh file to enable SSH on boot, and optionally set a default user and password. Remember to unmount the image afterward.
+- Obtain a suitable DTB file: Find a Device Tree Blob file within the kernel source tree that describes your hardware to the kernel. 
+</pre>
+
+
+Booting the Raspberry Pi emulated device with QEMU
+```
+qemu-system-aarch64 -machine virt -cpu cortex-a72 -smp 6 -m 4G \
+-kernel <path-to-your-built-kernel-Image> -append "root=/dev/vda2 rootfstype=ext4 rw panic=0 console=ttyAMA0" \
+-drive format=raw,file=<path-to-your-rpi-image>.img,if=none,id=hd0,cache=writeback \
+-device virtio-blk,drive=hd0,bootindex=0 \
+-netdev user,id=mynet,hostfwd=tcp::2222-:22 \
+-device virtio-net-pci,netdev=mynet
+```
+
+Accessing the emulated Raspberry Pi
+```
+ssh -l pi localhost -p 2222
+```
+
 ## Lab - Emulate Raspberry Pi with an emulated Fake USB Camera
 
 Install
