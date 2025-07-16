@@ -297,15 +297,18 @@ wget https://releases.ubuntu.com/jammy/ubuntu-22.04.5-live-server-amd64.iso
 Let's create a VM with ubuntu-22.04
 ```
 qemu-system-x86_64 \
-  -m 4G \
   -enable-kvm \
   -cpu host \
-  -cdrom ubuntu-22.04.5-live-server-amd64.iso \
-  -boot d \
-  -drive file=ubuntu1.qcow2,format=qcow2 \
+  -m 4096 \
   -smp 4 \
-  -net user,hostfwd=tcp::2222-:22 \
-  -net nic 
+  -drive file=ubuntu1.qcow2,format=qcow2 \
+  -boot c \
+  -netdev user,id=net0,hostfwd=tcp::2222-:22 \
+  -device e1000,netdev=net0 \
+  -serial mon:stdio \
+-nographic \
+-fsdev local,id=fsdev0,path=$HOME/qemu-share,security_model=none \
+-device virtio-9p-pci,fsdev=fsdev0,mount_tag=hostshare
 ```
 
 All the below command we need to perform within the ubuntu 22.04 vm
