@@ -126,9 +126,7 @@ lsusb
 ## Info - Troubleshooting common KVM-related issues
 <pre>
 - Problem - KVM Module Not Loaded or Missing
-  Fix 
-  '''
-  sudo modprobe kvm
-  sudo modprobe kvm_intel  
-  '''
+  Fix, run the below commands
+    sudo modprobe kvm
+    sudo modprobe kvm_intel  
 </pre>
