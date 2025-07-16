@@ -421,6 +421,7 @@ qemu-system-x86_64 -kernel bzImage \
 
 Expected output
 ```
-Welcome to minimal Linux!
+Welcome to our custom BusyBox OS !
+Hit enter button to access the shell
+You may use poweroff -f, once you are done ...
 ```
-
