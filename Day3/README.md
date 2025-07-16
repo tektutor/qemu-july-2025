@@ -154,3 +154,147 @@ lsusb
     # Check
       cat /sys/module/kvm_intel/parameters/nested
 </pre>
+
+## Lab - Multiple NICs with Shared VLAN (Legacy Style)
+
+Overview
+<pre>
+- VLAN Tagging
+  - VLAN tagging is a method of marking Ethernet frames with VLAN IDs to differentiate traffic 
+    belonging to different Virtual Local Area Networks (VLANs) 
+    even though the traffic is transmitted over the same physical or virtual link
+  - Goal
+    - is to logically separate networks over shared physical infrastructure 
+     (switches, bridges, virtual interfaces) while enabling traffic isolation and control
+- Linux bridge + VLAN subinterfaces simulate VLAN tagging
+- TAP interfaces per VM allow isolated control
+- QEMU connects each VM to the proper VLAN via -netdev tap
+- Manual IP setup inside guests completes the scenario  
+</pre>
+
+Installing VLAN
+```
+sudo apt update
+sudo apt install qemu bridge-utils vlan
+```
+
+Create Linux Bridge
+```
+# Create base bridge
+sudo ip link add name br0 type bridge
+sudo ip link set br0 up
+```
+
+Create VLAN Interfaces on Host
+```
+# VLAN 10
+sudo ip link add link br0 name br0.10 type vlan id 10
+sudo ip link set br0.10 up
+
+# VLAN 20
+sudo ip link add link br0 name br0.20 type vlan id 20
+sudo ip link set br0.20 up
+```
+
+Create TAP Interfaces for Each VM
+```
+# For Guest A (VLAN 10)
+sudo ip tuntap add dev tap10 mode tap
+sudo ip link set tap10 master br0.10
+sudo ip link set tap10 up
+
+# For Guest B (VLAN 10)
+sudo ip tuntap add dev tap11 mode tap
+sudo ip link set tap11 master br0.10
+sudo ip link set tap11 up
+
+# For Guest C (VLAN 20)
+sudo ip tuntap add dev tap20 mode tap
+sudo ip link set tap20 master br0.20
+sudo ip link set tap20 up
+```
+
+Create the Guest VMs
+Guest A (VLAN 10)
+```
+qemu-system-x86_64 \
+  -name guestA \
+  -m 1024 \
+  -smp 2 \
+  -enable-kvm \
+  -drive file=guestA.img,format=qcow2 \
+  -netdev tap,id=net0,ifname=tap10,script=no,downscript=no \
+  -device e1000,netdev=net0,mac=52:54:00:aa:aa:aa \
+  -nographic -serial mon:stdio
+```
+
+Guest B (VLAN 10)
+```
+qemu-system-x86_64 \
+  -name guestB \
+  -m 1024 \
+  -smp 2 \
+  -enable-kvm \
+  -drive file=guestB.img,format=qcow2 \
+  -netdev tap,id=net0,ifname=tap11,script=no,downscript=no \
+  -device e1000,netdev=net0,mac=52:54:00:bb:bb:bb \
+  -nographic -serial mon:stdio
+```
+
+Guest C (VLAN 20)
+```
+qemu-system-x86_64 \
+  -name guestC \
+  -m 1024 \
+  -smp 2 \
+  -enable-kvm \
+  -drive file=guestC.img,format=qcow2 \
+  -netdev tap,id=net0,ifname=tap20,script=no,downscript=no \
+  -device e1000,netdev=net0,mac=52:54:00:cc:cc:cc \
+  -nographic -serial mon:stdio
+```
+
+In Guest A
+```
+ip addr add 192.168.10.2/24 dev eth0
+ip link set eth0 up
+```
+
+In Guest B
+```
+ip addr add 192.168.10.3/24 dev eth0
+ip link set eth0 up
+```
+
+In Guest C
+```
+ip addr add 192.168.20.2/24 dev eth0
+ip link set eth0 up
+```
+
+Test the connectivity From Guest A
+```
+# Should be able to ping B
+ping 192.168.10.3
+
+# Should not be able to ping C
+ping 192.168.20.2 
+```
+
+Test the connectivity from Guest C
+```
+# Should not be able to ping Guest A
+ping 192.168.10.2 
+```
+
+Cleanup
+<pre>
+sudo ip link delete tap10
+sudo ip link delete tap11
+sudo ip link delete tap20
+sudo ip link delete br0.10
+sudo ip link delete br0.20
+sudo ip link delete br0  
+</pre>
+
+
