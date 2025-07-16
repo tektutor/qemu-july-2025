@@ -446,3 +446,48 @@ chmod +x scripts/*.sh
 # Cleanup
 ./scripts/cleanup.sh
 ```
+
+
+## Info - QEMU API and Custom Automation
+
+Overview
+<pre>
+- QEMU provides multiple interfaces to automate, control, and extend virtual machines 
+  beyond just launching them via the command line
+- These interfaces include:
+  1. QEMU Machine Protocol (QMP)
+  2. Human Monitor Protocol (HMP)
+</pre>
+
+For example, we can enable QMP
+<pre>
+qemu-system-x86_64 \
+  -qmp unix:/tmp/qmp-sock,server,nowait \
+  ...  
+</pre>
+
+Communicate with QMP from python script
+<pre>
+import qmp
+conn = qmp.QEMUMonitorProtocol('/tmp/qmp-sock')
+conn.connect()
+conn.cmd('query-status')  
+</pre>
+
+
+Enable 
+<pre>
+qemu-system-x86_64 -monitor stdio  
+</pre>
+
+In the monitor window, we can query
+<pre>
+info cpus
+info block
+device_add usb-mouse  
+</pre>
+
+You can also redirect to
+<pre>
+-monitor unix:/tmp/hmp-sock,server,nowait  
+</pre>
