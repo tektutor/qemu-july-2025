@@ -121,7 +121,14 @@ lsusb
     - mkdir -p /dev/hugepages
     - mount -t hugetlbfs none /dev/hugepages
 - Disable unnecessary devices
+</pre>
 
-
-
+## Info - Troubleshooting common KVM-related issues
+<pre>
+- Problem - KVM Module Not Loaded or Missing
+  Fix 
+  '''
+  sudo modprobe kvm
+  sudo modprobe kvm_intel  
+  '''
 </pre>
