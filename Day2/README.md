@@ -219,6 +219,19 @@ qemu-system-x86_64 \
   -device e1000,netdev=net0,mac=52:54:00:00:00:01 \
   -nographic
 ```
+In the above command
+<pre>
+script=no
+- Prevents QEMU from trying to run the default up script ( qemu-ifup ) to configure the TAP 
+  interface (tap0) when starting the VM
+- This means we must manually configure tap0 before starting QEMU
+
+downscript=no
+- Prevents QEMU from running a down script (qemu-ifdown) to tear down the TAP interface 
+  when the VM shuts down
+- So we keep control of the interface lifecycle 
+</pre>
+
 
 Start VM2
 ```
