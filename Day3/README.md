@@ -298,3 +298,151 @@ sudo ip link delete br0
 </pre>
 
 
+## Lab - Writing scripts to automate VM Creation
+
+Create a directory structure as shown below
+<pre>
+qemu-vm-lab/
+├── vms/
+│   ├── guestA.img
+│   ├── guestB.img
+│   └── guestC.img
+├── scripts/
+│   ├── create_net.sh
+│   ├── start_guestA.sh
+│   ├── start_guestB.sh
+│   ├── start_guestC.sh
+│   ├── cleanup.sh
+│   └── common.sh
+└── logs/  
+</pre>
+
+scripts/common.sh
+<pre>
+#!/bin/bash
+
+BRIDGE=br0
+VLAN10=$BRIDGE.10
+VLAN20=$BRIDGE.20
+
+create_bridge() {
+  sudo ip link add name $BRIDGE type bridge
+  sudo ip link set $BRIDGE up
+}
+
+create_vlan_interface() {
+  VLAN_ID=$1
+  IFNAME=$BRIDGE.$VLAN_ID
+  sudo ip link add link $BRIDGE name $IFNAME type vlan id $VLAN_ID
+  sudo ip link set $IFNAME up
+}
+
+create_tap() {
+  TAP=$1
+  VLAN_IF=$2
+  sudo ip tuntap add dev $TAP mode tap
+  sudo ip link set $TAP master $VLAN_IF
+  sudo ip link set $TAP up
+}
+
+delete_if_exists() {
+  sudo ip link delete $1 2>/dev/null || true
+}  
+</pre>
+
+create_net.sh
+<pre>
+#!/bin/bash
+source ./scripts/common.sh
+
+# Clean before setup 
+delete_if_exists tap10
+delete_if_exists tap11
+delete_if_exists tap20
+delete_if_exists $VLAN10
+delete_if_exists $VLAN20
+delete_if_exists $BRIDGE
+
+# Build network
+create_bridge
+create_vlan_interface 10
+create_vlan_interface 20
+
+create_tap tap10 $VLAN10  # Guest A
+create_tap tap11 $VLAN10  # Guest B
+create_tap tap20 $VLAN20  # Guest C
+
+echo "[INFO] Network setup complete"  
+</pre>
+
+VM Launch Scripts
+
+start_guestA.sh
+<pre>
+#!/bin/bash
+qemu-system-x86_64 \
+  -name guestA \
+  -m 1024 \
+  -smp 2 \
+  -enable-kvm \
+  -drive file=vms/guestA.img,format=qcow2 \
+  -netdev tap,id=net0,ifname=tap10,script=no,downscript=no \
+  -device e1000,netdev=net0,mac=52:54:00:aa:aa:aa \
+  -nographic -serial mon:stdio | tee logs/guestA.log  
+</pre>
+
+start_guestB.sh
+<pre>
+#!/bin/bash
+qemu-system-x86_64 \
+  -name guestB \
+  -m 1024 \
+  -smp 2 \
+  -enable-kvm \
+  -drive file=vms/guestB.img,format=qcow2 \
+  -netdev tap,id=net0,ifname=tap11,script=no,downscript=no \
+  -device e1000,netdev=net0,mac=52:54:00:bb:bb:bb \
+  -nographic -serial mon:stdio | tee logs/guestB.log  
+</pre>
+
+start_guestC.sh
+<pre>
+#!/bin/bash
+qemu-system-x86_64 \
+  -name guestC \
+  -m 1024 \
+  -smp 2 \
+  -enable-kvm \
+  -drive file=vms/guestC.img,format=qcow2 \
+  -netdev tap,id=net0,ifname=tap20,script=no,downscript=no \
+  -device e1000,netdev=net0,mac=52:54:00:cc:cc:cc \
+  -nographic -serial mon:stdio | tee logs/guestC.log  
+</pre>
+
+cleanup.sh
+<pre>
+#!/bin/bash
+source ./scripts/common.sh
+
+for i in tap10 tap11 tap20 $VLAN10 $VLAN20 $BRIDGE; do
+  delete_if_exists $i
+done
+
+echo "[INFO] All virtual interfaces and VLANs deleted."
+</pre>
+
+Let's put them to use
+```
+chmod +x scripts/*.sh
+
+# Setup network
+./scripts/create_net.sh
+
+# Start guests in different terminals
+./scripts/start_guestA.sh
+./scripts/start_guestB.sh
+./scripts/start_guestC.sh
+
+# Cleanup
+./scripts/cleanup.sh
+```
