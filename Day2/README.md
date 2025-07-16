@@ -345,13 +345,35 @@ make CONFIG_PREFIX=./_install install
 cd ~/linux-minimal/busybox/_install
 ```
 
-#Create a new /init script
+Create a new /init script under ~/linux-minimal/busybox/_install folder
+```
 cat > init << 'EOF'
 #!/bin/sh
 mount -t proc none /proc
 mount -t sysfs none /sys
-echo "Welcome to our Minimal Linux OS !"
-exec /bin/sh
+mount -t tmpfs tmpfs /tmp
+
+printf "\033[1;32mWelcome to our custom BusyBox OS !\033[0m\n"
+echo -e "\033[36mHit enter button to access the shell\033[0m"
+echo "You may use poweroff -f, once you are done ..."
+
+# Shell with job control
+setsid /bin/sh
+
+echo "Attempting to shut down..."
+
+# Try standard poweroff
+poweroff -f
+
+# If that fails, try sysrq-trigger
+echo o > /proc/sysrq-trigger
+
+# If that fails, try QEMU isa-debug-exit port
+printf '\x01' > /dev/port
+
+# If all else fails, just hang
+echo "Could not power off. Halting."
+while :; do sleep 1; done
 EOF
 chmod +x init
 ```
@@ -377,9 +399,9 @@ cp ~/linux-minimal/initramfs.cpio /mnt/build
 
 From the host machine, Boot with QEMU
 ```
-cd ~/linux-minimal
-qemu-system-x86_64 -kernel /home/jegan/qemu-share/bzImage \
-  -initrd /home/jegan/qemu-share/initramfs.cpio \
+cd /home/jegan/qemu-share
+qemu-system-x86_64 -kernel bzImage \
+  -initrd initramfs.cpio \
   -nographic -append "console=ttyS0"
 ```
 
