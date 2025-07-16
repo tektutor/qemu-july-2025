@@ -61,16 +61,18 @@ Replace the second entry containing /dev/mmcblk0p2 with /dev/sda2, other lines c
 Now we can emutate as shown below
 ```
 qemu-system-arm \
--kernel ~/qemu_vms/kernel-qemu-4.4.34-jessie \
+-kernel ~/qemu-raspi/kernel-qemu-4.4.34-jessie \
 -cpu arm1176 \
 -m 256 \
 -M versatilepb \
 -serial stdio \
 -append "root=/dev/sda2 \
 rootfstype=ext4 rw" \
--hda ~/qemu_vms/2017-04-10-raspbian-jessie.img \
--no-reboot  
-```
+-hda ~/qemu-raspi/2017-04-10-raspbian-jessie.img \
+-no-reboot \
+-vga std \
+-display gtk
+````
 
 ## Lab - Build a custom Embedded Linux Kernel for ARM and boot with QEMU
 
