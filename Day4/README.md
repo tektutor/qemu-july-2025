@@ -56,6 +56,24 @@ qemu-system-x86_64 \
   -smp 4 \
   -net user,hostfwd=tcp::3333-:22 \
   -net nic,macaddr=52:54:00:12:34:56 \
-  -netdev socket,id=net0,connect=:1234 \
-  -device virtio-net-pci,netdev=net0 
+  -netdev socket,id=net1,connect=:1234 \
+  -device virtio-net-pci,netdev=net1 
+```
+
+From VM2 Guest shell
+```
+# Change the hostname from vm1 to vm2
+sudo hostnamectl set-hostname vm2
+
+# Assign a different IP
+sudo ip addr flush dev ens3
+sudo ip addr add 10.0.2.16/24 dev ens3
+sudo ip link set dev ens3 up
+sudo ip route add default via 10.0.2.1
+
+ifconfig
+# you are supposed to 10.0.2.16
+
+## To cross-verify if the reassigned IP is retained by vm2, let's reboot
+sudo reboot
 ```
