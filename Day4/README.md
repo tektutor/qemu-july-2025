@@ -40,25 +40,13 @@ qemu-system-x86_64 \
   -device virtio-net-pci,netdev=net0 
 ```
 
+Let's clone the first VM1 disk to create the second VM2 disk
+```
+qemu-img convert -O qcow2 ubuntu1.qcow2 ubuntu2.qcow2
+```
+
 Let's create our second Guest VM2 
 ```
-qemu-system-x86_64 \
-  -m 8192 \
-  -enable-kvm \
-  -cpu host \
-  -cdrom ubuntu-22.04.5-live-server-amd64.iso  \
-  -boot d \
-  -drive file=ubuntu2.qcow2,format=qcow2 \
-  -smp 4 \
-  -net user,hostfwd=tcp::2222-:22 \
-  -net nic \
-  -netdev socket,id=net0,connect=:1234 \
-  -device virtio-net-pci,netdev=net0 
-```
-
-Boot into the vm2
-```
-
 qemu-system-x86_64 \
   -m 8192 \
   -enable-kvm \
@@ -67,8 +55,7 @@ qemu-system-x86_64 \
   -drive file=ubuntu2.qcow2,format=qcow2 \
   -smp 4 \
   -net user,hostfwd=tcp::2222-:22 \
-  -net nic \
+  -net nic,macaddr=52:54:00:12:34:56 \
   -netdev socket,id=net0,connect=:1234 \
   -device virtio-net-pci,netdev=net0 
 ```
-
