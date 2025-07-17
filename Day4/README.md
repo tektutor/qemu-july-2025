@@ -73,7 +73,4 @@ sudo ip route add default via 10.0.2.1
 
 ifconfig
 # you are supposed to 10.0.2.16
-
-## To cross-verify if the reassigned IP is retained by vm2, let's reboot
-sudo reboot
 ```
