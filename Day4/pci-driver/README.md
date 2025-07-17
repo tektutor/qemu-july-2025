@@ -43,6 +43,13 @@ qemu-system-x86_64 \
 
 
 # In guest machine
+Install the build tools
+```
+sudo apt update
+sudo apt install -y git build-essential gcc-arm-linux-gnueabi qemu-system-arm libncurses-dev bison flex libssl-dev
+```
+
+Now you may clone the training repository to build the pci driver
 ```
 cd ~
 git clone https://github.com/tektutor/qemu-july-2025.git
