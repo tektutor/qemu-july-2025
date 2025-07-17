@@ -9,7 +9,6 @@ qemu-img create -f qcow2 ubuntu1.qcow2 20G
 
 Need to install Ubuntu first
 ```
-```
 qemu-system-x86_64 \
   -m 8192 \
   -enable-kvm \
@@ -23,6 +22,7 @@ qemu-system-x86_64 \
   -nographic \
   -device ed
 ```
+
 Once you are done with the ubuntu installation, quit that and launch the VM as shown below.
 
 
