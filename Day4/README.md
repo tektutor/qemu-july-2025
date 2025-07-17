@@ -54,7 +54,7 @@ qemu-system-x86_64 \
   -boot c \
   -drive file=ubuntu2.qcow2,format=qcow2 \
   -smp 4 \
-  -net user,hostfwd=tcp::2222-:22 \
+  -net user,hostfwd=tcp::3333-:22 \
   -net nic,macaddr=52:54:00:12:34:56 \
   -netdev socket,id=net0,connect=:1234 \
   -device virtio-net-pci,netdev=net0 
