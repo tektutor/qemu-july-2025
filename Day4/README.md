@@ -14,7 +14,7 @@ qemu-system-x86_64 \
   -m 8192 \
   -enable-kvm \
   -cpu host \
-  -cdrom ubuntu-22.04.5-live-server-amd64.iso  
+  -cdrom ubuntu-22.04.5-live-server-amd64.iso  \
   -boot d \
   -drive file=ubuntu1.qcow2,format=qcow2 \
   -smp 4 \
@@ -46,7 +46,7 @@ qemu-system-x86_64 \
   -m 8192 \
   -enable-kvm \
   -cpu host \
-  -cdrom ubuntu-22.04.5-live-server-amd64.iso  
+  -cdrom ubuntu-22.04.5-live-server-amd64.iso  \
   -boot d \
   -drive file=ubuntu2.qcow2,format=qcow2 \
   -smp 4 \
