@@ -1,11 +1,11 @@
 # In guest machine
-cd simplepci-driver
+cd pci-driver
 
 # Build kernel module
 make -C /lib/modules/$(uname -r)/build M=$PWD/kernel modules
 
 # Insert module
-sudo insmod kernel/simplepci_driver.ko
+sudo insmod kernel/simplepci-driver.ko
 
 # Check dmesg
 sudo dmesg | tail
