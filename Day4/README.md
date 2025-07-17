@@ -18,10 +18,10 @@ qemu-system-x86_64 \
   -boot d \
   -drive file=ubuntu1.qcow2,format=qcow2 \
   -smp 4 \
-  -net user,hostfwd=tcp::2222-:22 \
-  -net nic \
-  -netdev socket,id=net0,listen=:1234 \
-  -device virtio-net-pci,netdev=net0 
+  -netdev user,id=net0,net=10.0.2.15/24, dhcpstart=10.0.2.15/24 hostfwd=tcp::2222-:22 \
+  -device e1000,netdev=net0 \
+  -netdev socket,id=net1,listen=:1234 \
+  -device virtio-net-pci,netdev=net1 
 ```
 
 Boot into the first Guest vm1
@@ -34,10 +34,10 @@ qemu-system-x86_64 \
   -boot c \
   -drive file=ubuntu1.qcow2,format=qcow2 \
   -smp 4 \
-  -net user,hostfwd=tcp::2222-:22 \
-  -net nic \
-  -netdev socket,id=net0,listen=:1234 \
-  -device virtio-net-pci,netdev=net0 
+  -netdev user,id=net0,net=10.0.2.15/24, dhcpstart=10.0.2.15/24 hostfwd=tcp::2222-:22 \
+  -device e1000,netdev=net0 \
+  -netdev socket,id=net1,listen=:1234 \
+  -device virtio-net-pci,netdev=net1 
 ```
 
 Let's clone the first VM1 disk to create the second VM2 disk
@@ -54,10 +54,10 @@ qemu-system-x86_64 \
   -boot c \
   -drive file=ubuntu2.qcow2,format=qcow2 \
   -smp 4 \
-  -net user,hostfwd=tcp::3333-:22 \
-  -net nic,macaddr=52:54:00:12:34:56 \
-  -netdev socket,id=net1,connect=:1234 \
-  -device virtio-net-pci,netdev=net1 
+  -netdev user,id=net2,net=10.0.2.16/24, dhcpstart=10.0.2.16/24 hostfwd=tcp::3333-:22 \
+  -device e1000,netdev=net2 \
+  -netdev socket,id=net3,listen=:1234 \
+  -device virtio-net-pci,netdev=net3 
 ```
 
 From VM2 Guest shell
