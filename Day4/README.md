@@ -1,29 +1,74 @@
 # Day 4
 
-## Lab - Emulate Raspberry Pi with an emulated Fake USB Camera (Incomplete)
+## Lab - Socket Communication between 2 QEMU VMs
 
-Install
+Let's create two disk images
 ```
-sudo apt update
-sudo apt install v4l-utils fswebcam -y
-```
-
-Setup a virtual camera on the host using v4l2loopback
-```
-sudo modprobe v4l2loopback devices=1 video_nr=10 card_label="FakeCam" exclusive_caps=1
+qemu-img create -f qcow2 ubuntu1.qcow2 10G
+qemu-img create -f qcow2 ubuntu2.qcow2 10G
 ```
 
-Let's see if we are able to list the fake camera we created
+Let's create our first Guest VM1 
 ```
-v4l2-ctl --list-devices
+qemu-system-x86_64 \
+  -m 8192 \
+  -enable-kvm \
+  -cpu host \
+  -cdrom ubuntu-22.04.5-live-server-amd64.iso  
+  -boot d \
+  -drive file=ubuntu1.qcow2,format=qcow2 \
+  -smp 4 \
+  -net user,hostfwd=tcp::2222-:22 \
+  -net nic \
+  -netdev socket,id=net0,listen=:1234 \
+  -device virtio-net-pci,netdev=net0 
 ```
 
-Let's stream some looping video
-```
-ffmpeg -re -stream_loop -1 -i test.mp4 -f v4l2 /dev/video10
+Boot into the first Guest vm1
 ```
 
-Find the USB deviceid
+qemu-system-x86_64 \
+  -m 8192 \
+  -enable-kvm \
+  -cpu host \
+  -boot c \
+  -drive file=ubuntu1.qcow2,format=qcow2 \
+  -smp 4 \
+  -net user,hostfwd=tcp::2222-:22 \
+  -net nic \
+  -netdev socket,id=net0,listen=:1234 \
+  -device virtio-net-pci,netdev=net0 
 ```
-lsusb
+
+Let's create our second Guest VM2 
 ```
+qemu-system-x86_64 \
+  -m 8192 \
+  -enable-kvm \
+  -cpu host \
+  -cdrom ubuntu-22.04.5-live-server-amd64.iso  
+  -boot d \
+  -drive file=ubuntu2.qcow2,format=qcow2 \
+  -smp 4 \
+  -net user,hostfwd=tcp::2222-:22 \
+  -net nic \
+  -netdev socket,id=net0,connect=:1234 \
+  -device virtio-net-pci,netdev=net0 
+```
+
+Boot into the vm2
+```
+
+qemu-system-x86_64 \
+  -m 8192 \
+  -enable-kvm \
+  -cpu host \
+  -boot c \
+  -drive file=ubuntu2.qcow2,format=qcow2 \
+  -smp 4 \
+  -net user,hostfwd=tcp::2222-:22 \
+  -net nic \
+  -netdev socket,id=net0,connect=:1234 \
+  -device virtio-net-pci,netdev=net0 
+```
+
