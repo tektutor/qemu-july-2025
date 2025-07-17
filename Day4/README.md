@@ -49,7 +49,6 @@ qemu-system-x86_64 \
   -cpu host \
   -boot c \
   -drive file=ubuntu2.qcow2,format=qcow2 \
-
   -netdev socket,id=net0,connect=:1234 \
   -device virtio-net-pci,netdev=net0 
 ```
