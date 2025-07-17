@@ -1,4 +1,5 @@
-obj-m += simplepci_driver.o
+obj-m += my-pci-driver.o
+my-pci-driver-objs += simplepci-driver.o
 
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
